@@ -50,6 +50,12 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'category',
     },
+    subcategories: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'SubCategory',
+      },
+    ],
     ratingsAverage: {
       type: Number,
       min: [1, 'Rating must be above or equal 1.0'],
@@ -64,31 +70,30 @@ const productSchema = new mongoose.Schema(
 );
 
 // Mongoose query middleware
-
-
-const setImageURL = (doc) => {
+const setImageUrl = (doc) => {
   if (doc.imageCover) {
-    const imageUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
-    doc.imageCover = imageUrl;
+    const imageCoverUrl = `${process.env.BASE_URL}/products/${doc.imageCover}`;
+    doc.imageCover = imageCoverUrl;
   }
   if (doc.images) {
-    const imagesList = [];
+    const images = [];
     doc.images.forEach((image) => {
       const imageUrl = `${process.env.BASE_URL}/products/${image}`;
-      imagesList.push(imageUrl);
+      images.push(imageUrl);
     });
-    doc.images = imagesList;
+    doc.images = images;
   }
 };
-// findOne, findAll and update
+
+
 productSchema.post('init', (doc) => {
-  setImageURL(doc);
+  setImageUrl(doc);
   
 });
 
 // create
 productSchema.post('save', (doc) => {
-  setImageURL(doc);
+  setImageUrl(doc);
   
 });
 productSchema.pre(/^find/,function (next) {

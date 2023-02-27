@@ -2,6 +2,9 @@
 const asyncHandler = require('express-async-handler');
 const createToken = require('../utils/createToken ');
 const ApiError = require('../utils/apiError');
+const ApiFeatures = require('../utils/apiFeatures');
+
+
 
 
 
@@ -65,7 +68,7 @@ exports.getAll=(model)=>
     
    
     
-    const DOC= await model.find({filter});
+    const DOC= await model.find(filter);
     
 
     
@@ -76,19 +79,56 @@ exports.getAll=(model)=>
     
 
 });
-exports.updateOne=(model)=> asyncHandler(async(req,res)=>{
+exports.updateOne= (Model) =>
+asyncHandler(async (req, res, next) => {
+  const document = await Model.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
 
-    const DOC= await model.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-      });
+  if (!document) {
+    return next(
+      new ApiError(`No document found for this id: ${req.params.id}`, 404)
+    );
+  }
+
+  // To trigger 'save' event when update document
+  //const doc = await document.save();
+
   
-      if (!DOC) {
-        return next(
-          new ApiError(`No document for this id ${req.params.id}`, 404)
-        );
-      }
-      // Trigger "save" event when update document
-      DOC.save();
-      res.status(200).json({ data: DOC });
-    });
+  res.status(200).json({ data: document });
+});
 
+    exports.getAllTest = (Model, modelName = '') =>
+    asyncHandler(async (req, res) => {
+      let filter = {};
+      if (req.filterObj) {
+        
+        filter = req.filterObj;
+      }
+      
+  
+      // Build query
+      // const documentsCounts = await Model.countDocuments();
+      const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
+        .filter()
+        .limitFields()
+        .search(modelName)
+        .sort();
+      // .paginate();
+  
+      // Apply pagination after filer and search
+      const docsCount = await Model.countDocuments(apiFeatures.mongooseQuery);
+      apiFeatures.paginate(docsCount);
+  
+      // Execute query
+      const { mongooseQuery, paginationResult } = apiFeatures;
+      const documents = await mongooseQuery;
+  
+      // Set Images url
+     // if (Model.collection.collectionName === 'products') {
+       // documents.forEach((doc) => setImageUrl(doc));
+      //}
+      res
+        .status(200)
+        .json({ results: docsCount, paginationResult, data: documents });
+    });

@@ -2,7 +2,7 @@ const slugify = require('slugify');
 const { check, body } = require('express-validator');
 const validatorMiddleware = require('../../middlewares/validatorMiddleware');
 const Category = require('../../models/categoryModel');
-
+const SubCategory = require('../../models/subCategoryModel');
 
 exports.createProductValidator = [
   check('title')
@@ -47,11 +47,11 @@ exports.createProductValidator = [
       return true;
     }),
 
-  check('colors')
-    .optional()
-    .isArray()
-    .withMessage('availableColors should be array of string'),
-  check('imageCover').optional(),
+  //check('colors')
+    //.optional()
+    //.isArray()
+    //.withMessage('availableColors should be array of string'),
+  check('imageCover').notEmpty().withMessage('Product imageCover is required'),
   check('images')
     .optional()
     .isArray()
@@ -70,6 +70,27 @@ exports.createProductValidator = [
         }
       })
     ),
+
+  check('subcategories')
+    .optional()
+    .isMongoId()
+    .withMessage('Invalid ID formate'),
+    
+    
+
+  check('brand').optional().isMongoId().withMessage('Invalid ID formate'),
+  check('ratingsAverage')
+    .optional()
+    .isNumeric()
+    .withMessage('ratingsAverage must be a number')
+    .isLength({ min: 1 })
+    .withMessage('Rating must be above or equal 1.0')
+    .isLength({ max: 5 })
+    .withMessage('Rating must be below or equal 5.0'),
+  check('ratingsQuantity')
+    .optional()
+    .isNumeric()
+    .withMessage('ratingsQuantity must be a number'),
 
   validatorMiddleware,
 ];

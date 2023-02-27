@@ -8,6 +8,8 @@ dotenv.config({ path: 'config.env' });
 const ApiError = require('./utils/apiError');
 const globalError = require('./middlewares/errorMiddleware');
 const dbConnection = require('./config/database');
+const cors = require('cors')
+const compression = require('compression')
 
 // Routes
 
@@ -19,6 +21,8 @@ const reviewRouter=require('./routes/reviewRoute')
 const couponRouter=require('./routes/couponRoute ')
 const cartRouter=require('./routes/cartRoute')
 const orderRouter=require('./routes/orderRoute')
+const subCategoryRoute=require('./routes/subCategoryRoute')
+
 
 
 
@@ -32,8 +36,19 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
+
+
+app.use(cors())
+app.options('*', cors())
+
+ //tcomperi les fichiers
+app.use(compression())
+
+
 //tkhademlek file hetha 
 app.use(express.static(path.join(__dirname, 'uploads')));
+
+
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -50,6 +65,8 @@ app.use('/shop/review', reviewRouter);
 app.use('/shop/coupon', couponRouter);
 app.use('/shop/user', userRouter);
 app.use('/shop/cart', cartRouter);
+app.use('/shop/subCaregory', subCategoryRoute);
+
 
 
 

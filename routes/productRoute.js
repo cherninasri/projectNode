@@ -33,8 +33,8 @@ router
   .route('/')
   .get(getProducts)
   .post(
-    authService.protect,
-    authService.allowedTo('admin', 'manager'),
+    //authService.protect,
+    //authService.allowedTo('admin', 'manager'),
     uploadProductImages,
     resizeProductImages,
     createProductValidator,
@@ -43,13 +43,14 @@ router
 router
   .route('/:id')
   .get(getProductValidator, getProduct)
-  .patch(authService.protect,
-    authService.allowedTo('admin'),
+  .patch(
+  uploadProductImages,
+  resizeProductImages,
     updateProductValidator
     ,updateProduct)
   .delete(
-    authService.protect,
-    authService.allowedTo('admin'),
+    //authService.protect,
+    //authService.allowedTo('admin'),
     deleteProductValidator,
     deleteProduct
   );

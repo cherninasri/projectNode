@@ -7,7 +7,7 @@ const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
 
 
-const{CreateDoc,findOne,delteOne,getAll,updateOne}=require('./Hfactory');
+const{CreateDoc,findOne,delteOne,getAll,getAllTest,updateOne}=require('./Hfactory');
 const { uploadMixOfImages } = require('../middlewares/uploadImageMiddleware');
 
 
@@ -69,7 +69,9 @@ exports.getProduct=findOne(Product);
 
 exports.deleteProduct=delteOne(Product);
 
-exports.getProducts=getAll(Product);
+
+exports.getProducts = getAllTest(Product,'Products');
+
 
 exports.updateProduct = updateOne(Product);
 

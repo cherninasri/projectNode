@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const asyncHandler = require('express-async-handler');
 
-const{CreateDoc,findOne,delteOne,getAll,updateOne}=require('./Hfactory');
+const{CreateDoc,findOne,delteOne,getAll,getAllTest,updateOne}=require('./Hfactory');
 const { uploadSingleImage } = require('../middlewares/uploadImageMiddleware');
 const Category = require('../models/categoryModel');
 
@@ -30,7 +30,9 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
 // @desc    Get list of categories
 // @route   GET /api/v1/categories
 // @access  Public
-exports.getCategories = getAll(Category);
+exports.getCategories = getAllTest(Category);
+//exports.getCategories = getAll(Category);
+
 
 // @desc    Get specific category by id
 // @route   GET /api/v1/categories/:id
